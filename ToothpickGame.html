@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p {
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <h2>捡火柴游戏</h2>
+            <p>游戏规则：将15根牙签分成三行，每行自上而下（其实方向不限）分别是3、5、7根，两个玩家中，每人可以在一轮内，在任意行拿任意根牙签，但不能跨行，拿最后一根牙签的人既是输家</p>
+        </div>
+        <div v-if="show">
+            <h2>{{player ? "玩家1" : "玩家2"}}</h2>
+            <div>
+                <p>选择行数：</p>
+                <input type="text" v-model="line" name="" id="line">
+            </div>
+            <div>
+                <p>拿走火柴数：</p>
+                <input type="text" v-model="toothpick" name="" id="toothpick">
+            </div>
+            <button @click="count">确定</button>
+        </div>
+        <div v-else>
+            <h2 style="color: red;">{{win}}</h2>
+        </div>
+    </div>
+
+
+
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            player: true,
+            // 牙签总数
+            tp: 15,
+            // 行数
+            line: "",
+            // 牙签数
+            toothpick: "",
+            // 牙签每层数量
+            tpArr: [3, 5, 7],
+            show: true,
+            win: ""
+        },
+        methods: {
+            // 计算牙签数
+            count() {
+                // 判断行数
+                if (this.line > 3 || this.line < 1) {
+                    this.empty();
+                } else {
+                    // 判断拿牙签数是否超出范围
+                    if (this.toothpick < 1 || this.toothpick > this.tpArr[this.line - 1]) {
+                        this.empty();
+                    } else {
+                        this.tpArr[this.line - 1] = this.tpArr[this.line - 1] - this.toothpick;
+                        this.tp = this.tp - this.toothpick;
+                        if (this.tp > 0) {
+                            this.player = !this.player
+                            this.line = "";
+                            this.toothpick = "";
+                            return
+                        } else {
+                            this.check()
+                        }
+                    }
+                }
+            },
+            // 超出范围
+            empty() {
+                alert("行数或火柴数超出范围");
+                this.line = "";
+                this.toothpick = "";
+                return
+            },
+            // 检测胜负
+            check() {
+                this.show = false;
+                if (this.player) {
+                    this.win = "玩家2获胜";
+                } else {
+                    this.win = "玩家1获胜";
+                }
+                return
+            }
+        }
+    })
+</script>
+
+</html>
